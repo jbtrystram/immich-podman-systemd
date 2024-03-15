@@ -1,0 +1,17 @@
+[Unit]
+Requires=immich-redis.service immich-database.service
+After=immich-redis.service immich-database.service
+
+[Container]
+# FIXME: this requires podman 5.0
+#Pod=immich.pod
+PodmanArgs=--pod immich
+ContainerName=immich_microservices
+EnvironmentFile=/etc/containers/systemd/immich/immich.env
+Exec=start.sh microservices
+Image=immich-server.image
+Volume=/home/raid/immich:/usr/src/app/upload:z
+Volume=/etc/localtime:/etc/localtime:ro
+
+[Service]
+Restart=always
