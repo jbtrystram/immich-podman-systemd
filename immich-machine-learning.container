@@ -1,8 +1,8 @@
 [Container]
 Pod=immich.pod
 ContainerName=immich_machine_learning
-EnvironmentFile=/etc/containers/systemd/immich/immich.env
 Image=ghcr.io/immich-app/immich-machine-learning:release
+EnvironmentFile=immich.env
 Volume=model-cache:/cache
 
 [Service]
