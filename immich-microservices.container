@@ -5,7 +5,7 @@ After=immich-redis.service immich-database.service
 [Container]
 Pod=immich.pod
 ContainerName=immich_microservices
-EnvironmentFile=/etc/containers/systemd/immich/immich.env
+EnvironmentFile=immich.env
 Exec=start.sh microservices
 Image=immich-server.image
 Volume=/home/raid/immich:/usr/src/app/upload:z
