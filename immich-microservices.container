@@ -3,9 +3,7 @@ Requires=immich-redis.service immich-database.service
 After=immich-redis.service immich-database.service
 
 [Container]
-# FIXME: this requires podman 5.0
-#Pod=immich.pod
-PodmanArgs=--pod immich
+Pod=immich.pod
 ContainerName=immich_microservices
 EnvironmentFile=/etc/containers/systemd/immich/immich.env
 Exec=start.sh microservices

@@ -1,7 +1,5 @@
 [Container]
-# FIXME: this requires podman 5.0
-#Pod=immich.pod
-PodmanArgs=--pod immich
+Pod=immich.pod
 ContainerName=immich_redis
 Image=docker.io/redis:6.2-alpine@sha256:afb290a0a0d0b2bd7537b62ebff1eb84d045c757c1c31ca2ca48c79536c0de82
 
