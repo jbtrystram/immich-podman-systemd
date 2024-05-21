@@ -3,11 +3,14 @@ Requires=immich-redis.service immich-database.service immich-microservices.servi
 After=immich-redis.service immich-database.service immich-microservices.service immich-database.service immich-machine-learning.service
 
 [Container]
-Pod=immich.pod
+# FIXME: this requires podman 5.0
+#Pod=immich.pod
+PodmanArgs=--pod immich
 ContainerName=immich_server
 EnvironmentFile=immich.env
 Exec=start.sh immich
 Image=immich-server.image
+#PublishPort=2283:3001
 Volume=/home/raid/immich:/usr/src/app/upload:z
 Volume=/etc/localtime:/etc/localtime:ro
 HealthCmd='["/bin/bash", "-c", "exec 5<>/dev/tcp/127.0.0.1/3001"]'
@@ -21,4 +24,4 @@ Notify=healthy
 Restart=always
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target default.target

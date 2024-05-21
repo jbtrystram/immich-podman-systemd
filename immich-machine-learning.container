@@ -1,5 +1,7 @@
 [Container]
-Pod=immich.pod
+# FIXME: this requires podman 5.0
+#Pod=immich.pod
+PodmanArgs=--pod immich
 ContainerName=immich_machine_learning
 EnvironmentFile=immich.env
 Image=ghcr.io/immich-app/immich-machine-learning:v1.101.0

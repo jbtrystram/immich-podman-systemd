@@ -2,5 +2,14 @@
 Wants=network-online.target nss-lookup.target
 After=network-online.target nss-lookup.target
 
-[Image]
+#FIXME  workaround unit we can use the Pod unit
+Before=immich-database.service immich-redis.service immich-machine-learning.service
+RequiredBy=immich-database.service immich-redis.service immich-machine-learning.service
+
 Image=ghcr.io/immich-app/immich-server:v1.101.0
+
+# workaround until podman 5 is released then the .pod
+# unit file will do that
+[Service]
+ExecStartPre=podman pod rm --force immich
+ExecStartPost=podman pod create --publish 2283:3001 immich
