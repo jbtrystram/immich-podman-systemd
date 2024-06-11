@@ -1,0 +1,162 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: immich-config
+data:
+    TZ: Etc/UTC
+    NODE_ENV: production
+    # LOG_LEVEL: verbose, debug, warn, error
+    LOG_LEVEL: warn
+    #IMMICH_MEDIA_LOCATION: "./upload"
+    #IMMICH_CONFIG_FILE:
+    #IMMICH_WEB_ROOT:
+    #IMMICH_REVERSE_GEOCODING_ROOT:
+    #HOST: 0.0.0.0
+    #SERVER_PORT: 3001
+    #MICROSERVICES_PORT: 3002
+    #MACHINE_LEARNING_HOST: 0.0.0.0
+    #MACHINE_LEARNING_PORT: 3003
+    #DB_URL:
+    DB_HOSTNAME: localhost
+    DB_PORT: 5432
+    DB_USERNAME: immich
+    DB_PASSWORD: Your-Secret-Postgres-Password
+    DB_DATABASE_NAME: immich
+    REDIS_HOST: 127.0.0.1
+    REDIS_PORT: 6379
+    #REDIS_URL:
+    #REDIS_USERNAME:
+    #REDIS_PASSWORD:
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: immich
+  labels:
+    app: immich
+  annotations:
+spec:
+
+  ## Volume definitions, set paths to stored data here
+  volumes:
+    - hostPath:
+        ## Equivalent of UPLOAD_LOCATION in docker-compose
+        path: /path/to/immich/data/
+        type: Directory
+      name: immich-data-host
+    - hostPath:
+        path: /path/to/immich/model-cache/
+        type: Directory
+      name: immich-model-cache-host
+    - name: immich-psql
+      persistentVolumeClaim:
+        claimName: immich-psql
+    - hostPath:
+        path: /path/to/immich/redis
+        type: Directory
+      name: immich-redis-host
+
+  ## Container definitions  
+  containers:
+    - name: server
+      image: ghcr.io/immich-app/immich-server:v1.105.1
+      resource: {}
+      securityContext:
+        capabilities:
+          drop:
+          - CAP_MKNOD
+          - CAP_NET_RAW
+          - CAP_AUDIT_WRITE
+      args:
+      - start.sh
+      - immich
+      volumeMounts:
+      - mountPath: /usr/src/app/upload
+        name: immich-data-host
+      ports:
+      ## Change hostPort here
+      - containerPort: 3001
+        hostPort: 3001
+      envFrom:
+      - configMapRef:
+          name: immich-config
+          optional: false
+
+    - name: microservices
+      image: ghcr.io/immich-app/immich-server:v1.105.1
+      args:
+      - start.sh
+      - microservices
+      envFrom:
+      - configMapRef:
+          name: immich-config
+          optional: false
+      volumeMounts:
+      - mountPath: /usr/src/app/upload
+        name: immich-data-host
+
+    - name: machine-learning
+      args:
+      - ./start.sh
+      image: ghcr.io/immich-app/immich-machine-learning:v1.105.1
+      volumeMounts:
+      - mountPath: /cache
+        name: immich-model-cache-host
+      envFrom:
+      - configMapRef:
+          name: immich-config
+          optional: false
+    
+    - name: psql
+      image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0
+      resource: {}
+      securityContext:
+        capabilities:
+          drop:
+          - CAP_MKNOD
+          - CAP_NET_RAW
+          - CAP_AUDIT_WRITE
+      volumeMounts:
+      - mountPath: /var/lib/postgresql/data
+        name: immich-psql
+      env:
+      - name: POSTGRES_USER
+        valueFrom:
+          configMapKeyRef:
+            name: immich-config
+            key: DB_USERNAME
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+          configMapKeyRef:
+            name: immich-config
+            key: DB_PASSWORD
+      - name: POSTGRES_DB
+        valueFrom:
+          configMapKeyRef:
+            name: immich-config
+            key: DB_DATABASE_NAME
+      - name: POSTGRES_INITDB_ARGS
+        value: "--data-checksums"
+      args: ["-c" ,"shared_preload_libraries=vectors.so", "-c", 'search_path="$$user", public, vectors', "-c", "logging_collector=on", "-c", "max_wal_size=2GB", "-c", "shared_buffers=512MB", "-c", "wal_compression=on"]
+    - name: redis
+      image: docker.io/library/redis:6.2-alpine
+      args:
+      - redis-server
+      - --save
+      - 60
+      - 1
+      - --loglevel
+      - warning
+      resources: {}
+      securityContext:
+        capabilities:
+          drop:
+          - CAP_MKNOD
+          - CAP_NET_RAW
+          - CAP_AUDIT_WRITE
+      volumeMounts:
+      - mountPath: /data
+        name: immich-redis-host
+
+  restartPolicy: Always
+status: {}
