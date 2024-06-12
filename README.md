@@ -57,7 +57,7 @@ Copy these files into the user's `containers/systemd` directory:
 
 Start the user session, make it persistent and start the pod (replace 998 with `immich` user ID):
 ```
-# systemctl start user@998
+# systemctl start user@$(id -u immich)
 # loginctl enable-linger immich
 # systemctl --user -M immich@.host start immich-pod.service
 ```
