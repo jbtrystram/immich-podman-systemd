@@ -41,31 +41,32 @@ The containers and named volumes will be stored in `/var/lib/immich`.
 
 Configure `subuid` and `subgid` for podman to be able to run as this user:
 ```
-# cat >> /etc/subuid <<EOF
+cat >> /etc/subuid <<EOF
 immich:2000000:1000000
 EOF
-# cat >> /etc/subgid <<EOF
+
+cat >> /etc/subgid <<EOF
 immich:2000000:1000000
 EOF
 ```
 
 Copy these files into the user's `containers/systemd` directory:
 ```
-# sudo -u immich mkdir -p ~immich/.config/containers/systemd/immich
-# sudo -u immich cp -v *.image *.container *.pod immich.env ~immich/.config/containers/systemd/immich/
+sudo -u immich mkdir -p ~immich/.config/containers/systemd/immich
+sudo -u immich cp -v *.image *.container *.pod immich.env ~immich/.config/containers/systemd/immich/
 ```
 
-Start the user session, make it persistent and start the pod (replace 998 with `immich` user ID):
+Start the user session, make it persistent and start the pod:
 ```
-# systemctl start user@998
-# loginctl enable-linger immich
-# systemctl --user -M immich@.host start immich-pod.service
+systemctl start user@$(id -u immich)
+loginctl enable-linger immich
+systemctl --user -M immich@.host start immich-pod.service
 ```
 
 Watch `journalctl` to see if the containers start successfully -
 the first start can fail if downloading the images takes more than the default startup timeout:
 ```
-# journalctl -f
+journalctl -f
 ```
 
 The containers should start on the next boot automatically.
