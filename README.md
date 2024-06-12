@@ -56,7 +56,7 @@ sudo -u immich mkdir -p ~immich/.config/containers/systemd/immich
 sudo -u immich cp -v *.image *.container *.pod immich.env ~immich/.config/containers/systemd/immich/
 ```
 
-Start the user session, make it persistent and start the pod (replace 998 with `immich` user ID):
+Start the user session, make it persistent and start the pod:
 ```
 systemctl start user@$(id -u immich)
 loginctl enable-linger immich
