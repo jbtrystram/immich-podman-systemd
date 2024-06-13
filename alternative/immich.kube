@@ -1,0 +1,7 @@
+[Install]
+WantedBy=default.target
+
+[Kube]
+Yaml=immich-pod.yaml
+PublishPort=3001:3001
+ConfigMap=immich-configMap.yaml
