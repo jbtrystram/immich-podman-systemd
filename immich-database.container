@@ -8,7 +8,7 @@ HealthCmd=["/usr/bin/pg_isready"]
 HealthStartPeriod=30s
 HealthInterval=10s
 HealthTimeout=5s
-HealthRetries=5
+HealthRetries=2
 Notify=healthy
 
 [Service]

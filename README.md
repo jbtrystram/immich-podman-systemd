@@ -1,5 +1,8 @@
 # immich-app podman + quadlet deployment
 
+⚠️ **Curently supported immich version: [v1.108.0](https://github.com/immich-app/immich/releases/tag/v1.108.0)** ⚠️
+
+
 This is a set of unit files to deploy immich through the podman-quadlet systemd generator
 
 See the [documentation](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html)
@@ -7,15 +10,18 @@ This is adapted from immich provided docker-compose file, this will create a pod
 
 # Overview
 
-This setup consist in one `.image` file that does some prep work: pulling the image and creating a podman pod that will host all the containers
-Then the `.container` files are translated into systemd units that create the containers. 
+This setup consist in:
+ - `immich.pod` file defining a pod that will host all the containers.
+ - `immich-server.image` defining the immich version.
+ - several `immich-*.container` files defining the containers, volumes etc..
+ 
+The `.container` files are translated into systemd units that create the containers. 
 
 Note how the `immich-server.container` have an install target on `default.target` which makes it start on boot. 
-I am not sure the `multi-user` target is really needed. 
 
 # How do I deploy it ?
 
-Rename `env.example` to `immich.env`.
+Rename `env.example` to `immich.env`. Populate the values as needed.
 
 ## rootful podman
 
@@ -74,4 +80,4 @@ The containers should start on the next boot automatically.
 
 # TODO 
 - write a makefile or a justfile that insert the variables in the unit files maybe ? Right now it requires some copy and pasting.
-- Contribute it upstream to immich
+- Contribute it upstream to immich : no longer a goal, they stated they are [not interested](https://github.com/immich-app/immich/discussions/7977).

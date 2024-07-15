@@ -1,6 +1,6 @@
 [Unit]
-Requires=immich-redis.service immich-database.service immich-microservices.service immich-database.service immich-machine-learning.service
-After=immich-redis.service immich-database.service immich-microservices.service immich-database.service immich-machine-learning.service
+Requires=immich-redis.service immich-database.service 
+After=immich-redis.service immich-database.service 
 
 [Container]
 Pod=immich.pod
@@ -18,6 +18,8 @@ HealthRetries=10
 Notify=healthy
 
 [Service]
+# give some time to the database to start
+ExecStartPre=sleep 30
 Restart=always
 
 [Install]
