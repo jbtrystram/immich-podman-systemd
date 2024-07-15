@@ -1,0 +1,18 @@
+[Unit]
+Description=Dumps immich postgre database for backup
+Documentation=https://immich.app/docs/administration/backup-and-restore/
+After=immich-database
+Requires=immich-database
+
+[Service]
+Type=oneshot
+# Dump the database as SQL
+ExecStart=podman exec -t immich_postgres pg_dumpall --clean --if-exists --username=postgres -f /var/db_backup/backup
+# Rename the file (double % to escape systemd specifiers)
+ExecStart=bash -c "mv /path/to/database_backup/backup /var/hdd-raid/immich/database_backup/$(date +%%Y%%m%%d)"
+# Compress the file (double % to escape systemd specifiers)
+ExecStart=bash -c "gzip /var/hdd-raid/immich/database_backup/$(date +%%Y%%m%%d)"
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

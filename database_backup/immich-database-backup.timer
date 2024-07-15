@@ -1,0 +1,9 @@
+[Unit]
+Description=Trigger immich-database-backup service
+
+[Timer]
+# Twice a week : mondays, thursdays, mornings
+OnCalendar=Mon,Thu 05:00 Europe/Paris
+
+[Install]
+WantedBy=timers.target

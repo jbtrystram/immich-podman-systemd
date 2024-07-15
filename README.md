@@ -78,6 +78,15 @@ journalctl -f
 The containers should start on the next boot automatically.
 
 
+# Database backup
+
+The `database_backup` folder suggests a way to dump the database regularly. Make sure to add a volume mount to the 
+database container and bind it to `/var/db_backup`
+
+As is, the unit will create gziped SQL dumps named with the date of creation: `YYYYMMDD`.
+
+To enable it, place the files in `/etc/systemd/system` then enable the timer: `systemctl enable --now immich-database-backup.timer`.
+
 # TODO 
 - write a makefile or a justfile that insert the variables in the unit files maybe ? Right now it requires some copy and pasting.
 - Contribute it upstream to immich : no longer a goal, they stated they are [not interested](https://github.com/immich-app/immich/discussions/7977).
