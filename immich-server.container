@@ -8,8 +8,12 @@ ContainerName=immich_server
 EnvironmentFile=immich.env
 Exec=start.sh immich
 Image=immich-server.image
-Volume=/home/raid/immich:/usr/src/app/upload:z
+Volume=/path/to/immich/library:/usr/src/app/upload:z
+
+# If localtime is not set (e.g. Fedora CoreOS) : 
+# Volume=/usr/share/zoneinfo/Europe/Paris:/etc/localtime:ro
 Volume=/etc/localtime:/etc/localtime:ro
+
 HealthCmd=["/bin/bash", "-c", "exec 5<>/dev/tcp/127.0.0.1/3001"]
 HealthStartPeriod=30s
 HealthInterval=10s

@@ -3,10 +3,12 @@ Pod=immich.pod
 ContainerName=immich_postgres
 EnvironmentFile=immich.env
 Image=docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
-Volume=pgdata:/var/lib/postgresql/data
-HealthCmd=["/usr/bin/pg_isready"]
-HealthStartPeriod=30s
-HealthInterval=10s
+Volume=/path/to/database/database:/var/lib/postgresql/data:z
+Volume=./immich-database-healthcheck:/health.sh
+Exec= postgres -c shared_preload_libraries=vectors.so -c 'search_path="$$user", public, vectors' -c logging_collector=on -c max_wal_size=2GB -c shared_buffers=512MB -c wal_compression=on
+HealthCmd=["/bin/bash", "/health.sh"]
+HealthStartPeriod=5m
+HealthInterval=5m
 HealthTimeout=5s
 HealthRetries=2
 Notify=healthy
