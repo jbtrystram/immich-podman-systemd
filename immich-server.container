@@ -6,7 +6,6 @@ After=immich-redis.service immich-database.service
 Pod=immich.pod
 ContainerName=immich_server
 EnvironmentFile=immich.env
-Exec=start.sh immich
 Image=immich-server.image
 Volume=/path/to/immich/library:/usr/src/app/upload:z
 
