@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: immich-config
+data:
+    TZ: Etc/UTC
+    NODE_ENV: production
+    # LOG_LEVEL: verbose, debug, warn, error
+    LOG_LEVEL: warn
+    #IMMICH_MEDIA_LOCATION: "./upload"
+    #IMMICH_CONFIG_FILE:
+    #IMMICH_WEB_ROOT:
+    #IMMICH_REVERSE_GEOCODING_ROOT:
+    #HOST: 0.0.0.0
+    #SERVER_PORT: 3001
+    #MICROSERVICES_PORT: 3002
+    #MACHINE_LEARNING_HOST: 0.0.0.0
+    #MACHINE_LEARNING_PORT: 3003
+    #DB_URL:
+    DB_HOSTNAME: localhost
+    DB_PORT: 5432
+    DB_USERNAME: immich
+    DB_PASSWORD: Your-Secret-Postgres-Password
+    DB_DATABASE_NAME: immich
+    REDIS_HOST: 127.0.0.1
+    REDIS_PORT: 6379
+    #REDIS_URL:
+    #REDIS_USERNAME:
+    #REDIS_PASSWORD:
