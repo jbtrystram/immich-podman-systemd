@@ -1,0 +1,12 @@
+[Unit]
+Description=immich external access proxy sockets
+
+[Socket]
+# Immich web
+ListenStream=0.0.0.0:2283
+# Postgres db for backups
+ListenStream=127.0.0.1:5433
+Service=immich-proxy.service
+
+[Install]
+WantedBy=sockets.target
