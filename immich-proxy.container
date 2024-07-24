@@ -8,9 +8,7 @@ ContainerName=immich_proxy
 # Alpine image has the stream proxy function: https://stackoverflow.com/questions/41696177/how-to-get-nginx-with-stream-ssl-module-without-recompiling-docker-accepted
 Image=docker.io/nginx:1.27.0-alpine
 Environment=NGINX=4;3;
-Volume=%h/immich/nginx.conf:/etc/nginx/nginx.conf:ro
-Volume=%h/ssl-certs:/ssl:ro
-Volume=%h/immich/photo-frame:/data/photo-frame:ro
+Volume=nginx.conf:/etc/nginx/nginx.conf:ro
 
 [Install]
 WantedBy=default.target
