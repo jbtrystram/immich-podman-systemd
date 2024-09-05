@@ -1,7 +1,7 @@
 [Container]
 Pod=immich.pod
 ContainerName=immich_redis
-Image=docker.io/redis:6.2-alpine@sha256:328fe6a5822256d065debb36617a8169dbfbd77b797c525288e465f56c1d392b
+Image=docker.io/redis:6.2-alpine@sha256:e3b17ba9479deec4b7d1eeec1548a253acc5374d68d3b27937fcfe4df8d18c7e
 HealthCmd=["/usr/local/bin/redis-cli", "ping"]
 HealthStartPeriod=30s
 HealthInterval=10s
