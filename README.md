@@ -14,6 +14,8 @@ This setup consist in:
  - `immich.pod` file defining a pod that will host all the containers.
  - `immich-server.image` defining the immich version.
  - several `immich-*.container` files defining the containers, volumes etc..
+ - Systemd activation socket, `immich-proxy.socket`, this provides a way to access immich from
+   outside the pod. Otherwise all the containers in this setup have no network access.
  
 The `.container` files are translated into systemd units that create the containers. 
 
@@ -25,11 +27,13 @@ Rename `env.example` to `immich.env`. Populate the values as needed.
 
 ## rootful podman
 
-Copy theses files into `/etc/containers/systemd` then reload systemd. 
+Copy theses files into `/etc/containers/systemd` then reload systemd. Copy the .socket file to
+`/etc/systemd/system`.
 
 It can be a subdirectory. e.g : 
 ```
 sudo cp -r . /etc/containers/systemd/immich
+sudo cp immich-proxy.socket /etc/systemd/system
 sudo systemctl daemon-reload
 ```
 
@@ -56,10 +60,15 @@ immich:2000000:1000000
 EOF
 ```
 
-Copy these files into the user's `containers/systemd` directory:
+Copy immich-proxy.socket to `~immich/.config/systemd/user`.
+
+Copy the remaining files into the user's `containers/systemd` directory:
+
 ```
 sudo -u immich mkdir -p ~immich/.config/containers/systemd/immich
 sudo -u immich cp -v *.image *.container *.pod immich.env ~immich/.config/containers/systemd/immich/
+sudo -u immich mkdir -p ~immich/.config/systemd/user
+sudo -u immich cp -v *.image *.socket ~immich/.config/systemd/user/
 ```
 
 Start the user session, make it persistent and start the pod:
