@@ -1,8 +1,7 @@
 [Container]
 Pod=immich.pod
 ContainerName=immich_machine_learning
-EnvironmentFile=immich.env
-Image=ghcr.io/immich-app/immich-machine-learning:v1.113.1
+Image=ghcr.io/immich-app/immich-machine-learning:v1.118.1
 Volume=model-cache:/cache
 HealthCmd=["/bin/bash", "-c", "exec 5<>/dev/tcp/127.0.0.1/3003"]
 HealthStartPeriod=30s
