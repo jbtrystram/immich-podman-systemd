@@ -1,18 +1,19 @@
 [Container]
 Pod=immich.pod
 ContainerName=immich_postgres
+Environment="POSTGRES_INITDB_ARGS=--data-checksums"
 EnvironmentFile=immich.env
 Image=docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
 Volume=/path/to/database/database:/var/lib/postgresql/data:z
 Volume=./immich-database-healthcheck:/health.sh
 # If you want to use the unit provided in `database_backup`
 # Volume=/path/to/db/backups:/var/db_backup/:z
-Exec= postgres -c shared_preload_libraries=vectors.so -c 'search_path="$$user", public, vectors' -c logging_collector=on -c max_wal_size=2GB -c shared_buffers=512MB -c wal_compression=on
+Exec= postgres -c shared_preload_libraries=vectors.so -c 'search_path="$$user", public, vectors' -c max_wal_size=2GB -c shared_buffers=512MB -c wal_compression=on
 HealthCmd=["/bin/bash", "/health.sh"]
 HealthStartPeriod=5m
-HealthInterval=5m
+HealthInterval=30s
 HealthTimeout=5s
-HealthRetries=2
+HealthRetries=5
 Notify=healthy
 
 [Service]

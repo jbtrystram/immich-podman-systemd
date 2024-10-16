@@ -6,6 +6,7 @@ After=immich-redis.service immich-database.service
 Pod=immich.pod
 ContainerName=immich_server
 EnvironmentFile=immich.env
+
 Image=immich-server.image
 Volume=/path/to/immich/library:/usr/src/app/upload:z
 
@@ -13,8 +14,8 @@ Volume=/path/to/immich/library:/usr/src/app/upload:z
 # Volume=/usr/share/zoneinfo/Europe/Paris:/etc/localtime:ro
 Volume=/etc/localtime:/etc/localtime:ro
 
-HealthCmd=["/bin/bash", "-c", "exec 5<>/dev/tcp/127.0.0.1/3001"]
-HealthStartPeriod=30s
+HealthCmd=["/bin/bash", "immich-healthcheck"]
+HealthStartPeriod=3m
 HealthInterval=10s
 HealthTimeout=30s
 HealthRetries=10
