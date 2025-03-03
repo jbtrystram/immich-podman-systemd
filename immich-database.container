@@ -4,7 +4,6 @@ ContainerName=immich_postgres
 Environment="POSTGRES_INITDB_ARGS=--data-checksums"
 EnvironmentFile=immich.env
 Image=docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
-Volume=/path/to/database/database:/var/lib/postgresql/data:z
 Volume=./immich-database-healthcheck:/health.sh
 # If you want to use the unit provided in `database_backup`
 # Volume=/path/to/db/backups:/var/db_backup/:z

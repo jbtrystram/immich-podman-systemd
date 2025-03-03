@@ -8,7 +8,6 @@ ContainerName=immich_server
 EnvironmentFile=immich.env
 
 Image=immich-server.image
-Volume=/path/to/immich/library:/usr/src/app/upload:z
 
 # If localtime is not set (e.g. Fedora CoreOS) : 
 # Volume=/usr/share/zoneinfo/Europe/Paris:/etc/localtime:ro

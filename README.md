@@ -23,6 +23,14 @@ Note how the `immich-server.container` have an install target on `default.target
 
 Rename `env.example` to `immich.env`. Populate the values as needed.
 
+## Volume setup
+
+Since the update to 1.128.0 i changed how the volumes are declared. I was tired of having to copy-paste 
+the quadlet files but having to update my volume paths each time.
+So i created the [volume-dropins](./volume-dropins) folder where the volumes mounts can be defined
+once and they will be merged with the final quadlet.
+
+
 ## rootful podman
 
 Copy theses files into `/etc/containers/systemd` then reload systemd. 
