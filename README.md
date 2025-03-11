@@ -67,7 +67,7 @@ EOF
 Copy these files into the user's `containers/systemd` directory:
 ```
 sudo -u immich mkdir -p ~immich/.config/containers/systemd/immich
-sudo -u immich cp -v *.image *.container *.pod immich.env ~immich/.config/containers/systemd/immich/
+sudo -u immich cp -v -r *.image *.container *.pod immich.env *healthcheck volumes-dropins/* ~immich/.config/containers/systemd/immich/
 ```
 
 Start the user session, make it persistent and start the pod:
