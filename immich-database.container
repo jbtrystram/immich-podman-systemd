@@ -4,7 +4,7 @@ ContainerName=immich_postgres
 Environment="POSTGRES_INITDB_ARGS=--data-checksums"
 EnvironmentFile=immich.env
 Image=docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:739cdd626151ff1f796dc95a6591b55a714f341c737e27f045019ceabf8e8c52
-Volume=./immich-database-healthcheck:/health.sh
+Volume=./immich-database-healthcheck:/health.sh:z
 # If you want to use the unit provided in `database_backup`
 # Volume=/path/to/db/backups:/var/db_backup/:z
 Exec= postgres -c shared_preload_libraries=vectors.so -c 'search_path="$$user", public, vectors' -c logging_collector=on -c max_wal_size=2GB -c shared_buffers=512MB -c wal_compression=on
