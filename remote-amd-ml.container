@@ -1,7 +1,7 @@
 [Container]
 ContainerName=immich_ml
 PublishPort=3003:3003
-Image=ghcr.io/immich-app/immich-machine-learning:v1.118.1-cuda
+Image=ghcr.io/immich-app/immich-machine-learning:v1.134.0-rocm
 Volume=model-cache:/cache
 HealthCmd=["/bin/bash", "-c", "exec 5<>/dev/tcp/127.0.0.1/3003"]
 HealthStartPeriod=30s
@@ -10,12 +10,11 @@ HealthTimeout=5s
 HealthRetries=5
 Notify=healthy
 
-# nvidia options for rootless podman
-# First generate the CDI file
-# https://podman-desktop.io/docs/podman/gpu
-# also https://blog.shawonashraf.com/nvidia-podman-fedora-37
 SecurityLabelDisable=true
-AddDevice=nvidia.com/gpu=all
+AddDevice=-/dev/accel
+AddDevice=-/dev/dri
+AddDevice=-/dev/kfd
+GroupAdd=video
 
 [Service]
 Restart=always
