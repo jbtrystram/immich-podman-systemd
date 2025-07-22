@@ -3,7 +3,7 @@ Pod=immich.pod
 ContainerName=immich_postgres
 Environment="POSTGRES_INITDB_ARGS=--data-checksums"
 EnvironmentFile=immich.env
-Image=ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0@sha256:fa4f6e0971f454cd95fec5a9aaed2ed93d8f46725cc6bc61e0698e97dba96da1
+Image=ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
 Volume=./immich-database-healthcheck:/health.sh:z
 # If you want to use the unit provided in `database_backup`
 # Volume=/path/to/db/backups:/var/db_backup/:z

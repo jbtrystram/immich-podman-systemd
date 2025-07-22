@@ -3,4 +3,4 @@ Wants=nss-lookup.target network-online.target
 After=nss-lookup.target network-online.target
 
 [Image]
-Image=ghcr.io/immich-app/immich-server:v1.134.0
+Image=ghcr.io/immich-app/immich-server:v1.135.3
