@@ -1,23 +1,23 @@
 # immich-app podman + quadlet deployment
 
-⚠️ **Curently supported immich version: [v2.1.0](https://github.com/immich-app/immich/releases/tag/v2.1.0)** ⚠️
+⚠️ **Currently supported immich version: [v2.1.0](https://github.com/immich-app/immich/releases/tag/v2.1.0)** ⚠️
 
 
 This is a set of unit files to deploy immich through the podman-quadlet systemd generator
 
 See the [documentation](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html)
-This is adapted from immich provided docker-compose file, this will create a podman pod hosting all thc containers.
+This is adapted from immich provided docker-compose file, this will create a podman pod hosting all the containers.
 
 # Overview
 
-This setup consist in:
+This setup consists of:
  - `immich.pod` file defining a pod that will host all the containers.
  - `immich-server.image` defining the immich version.
  - several `immich-*.container` files defining the containers, volumes etc..
  
 The `.container` files are translated into systemd units that create the containers. 
 
-Note how the `immich-server.container` have an install target on `default.target` which makes it start on boot. 
+Note how the `immich-server.container` has an install target on `default.target` which makes it start on boot. 
 
 # How do I deploy it ?
 
@@ -27,13 +27,13 @@ Rename `env.example` to `immich.env`. Populate the values as needed.
 
 Since the update to 1.128.0 i changed how the volumes are declared. I was tired of having to copy-paste 
 the quadlet files but having to update my volume paths each time.
-So i created the [volume-dropins](./volume-dropins) folder where the volumes mounts can be defined
+So I created the [volume-dropins](./volume-dropins) folder where the volumes mounts can be defined
 once and they will be merged with the final quadlet.
 
 
 ## rootful podman
 
-Copy theses files into `/etc/containers/systemd` then reload systemd. 
+Copy these files into `/etc/containers/systemd` then reload systemd. 
 
 It can be a subdirectory. e.g : 
 ```
@@ -102,7 +102,7 @@ Edit the environment variables in `immich-configMap.yaml` according to the Immic
 
 Reload systemd units and start the service:
 ```
-systemctl daemon-reload`
+systemctl daemon-reload
 systemctl start immich
 ```
 
@@ -116,7 +116,7 @@ Change ownership of the host directories to the created user. This user's UID wi
 
 Start the user session, and the pod:
 ```
-systemctl start user@$(id -u immich)`
+systemctl start user@$(id -u immich)
 systemctl --user -M immich@.host start immich.service
 ```
 
@@ -127,7 +127,7 @@ systemctl --user -M immich@.host start immich.service
 The `database_backup` folder suggests a way to dump the database regularly. Make sure to add a volume mount to the 
 database container and bind it to `/var/db_backup`
 
-As is, the unit will create gziped SQL dumps named with the date of creation: `YYYYMMDD`.
+As is, the unit will create gzipped SQL dumps named with the date of creation: `YYYYMMDD`.
 
 To enable it, place the files in `/etc/systemd/system` then enable the timer: `systemctl enable --now immich-database-backup.timer`.
 
