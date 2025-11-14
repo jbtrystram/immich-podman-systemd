@@ -10,16 +10,16 @@ This is adapted from immich provided docker-compose file, this will create a pod
 
 # Overview
 
-This setup consists of:
- - `immich.pod` file defining a pod that will host all the containers.
- - `immich-server.image` defining the immich version.
- - several `immich-*.container` files defining the containers, volumes etc..
- 
-The `.container` files are translated into systemd units that create the containers. 
+=======
+The repo is organized into the following directories:
 
-Note how the `immich-server.container` has an install target on `default.target` which makes it start on boot. 
+- **`quadlet/`**: Contains the core Quadlet unit files for deploying Immich services (database, server, machine learning, Redis) as Podman containers within a systemd pod.
+- **`ml-workers/`**: Contains Quadlet unit files for hardware-accelerated machine learning worker configurations, including OpenVINO and remote NVIDIA/AMD setups.
+- **`backup/`**: Provides systemd service and timer units for regularly backing up the Immich PostgreSQL database.
+- **`kube/`**: Contains Kubernetes-style configuration files, including a ConfigMap and a Pod definition, for deploying Immich in a Kubernetes environment (or with podman kube play).
+>>>>>>> 27928af (tree: rework repo layout to improve clarity)
 
-# How do I deploy it ?
+# How to Deploy
 
 Create a podman secret for the database password:
 
@@ -91,49 +91,12 @@ journalctl -f
 
 The containers should start on the next boot automatically.
 
-# Alternative single-pod deployment
+# Kubernetes Deployment
 
-## SELinux
-On SELinux-enabled systems, the context of mapped host directories needs to be set manually. If all the mapped directories are under `/path/to/immich`, set the context with
-```
-chcon -R -t container_file_t /path/to/immich
-```
+For deploying Immich in a Kubernetes environment, refer to the documentation in [`kube/README.md`](./kube/README.md).
 
-## rootful
+# Database Backup
 
-Copy the contents of the `alternative/` directory to `/etc/containers/systemd/`
-or a subdirectory within, e.g. `/etc/containers/systemd/immich/`
-
-Edit the environment variables in `immich-configMap.yaml` according to the Immich upstream docker-compose instructions and change the published port in `immich.kube`. Edit host directory mappings in `immich-pod.yaml`
-
-Reload systemd units and start the service:
-```
-systemctl daemon-reload
-systemctl start immich
-```
-
-## rootless
-
-Create and configure the user like above, username is `immich` in this example. Copy the contents of `alternative/` to `~/.config/containers/systemd/` or a subdirectory within.
-
-Edit `immich-configMap.yaml`, `immich-pod.yaml` and `immich.kube` like with the rootful deployment.
-
-Change ownership of the host directories to the created user. This user's UID will be mapped as root inside the containers.
-
-Start the user session, and the pod:
-```
-systemctl start user@$(id -u immich)
-systemctl --user -M immich@.host start immich.service
-```
-
-
-
-# Database backup
-
-The `database_backup` folder suggests a way to dump the database regularly. Make sure to add a volume mount to the 
-database container and bind it to `/var/db_backup`
-
-As is, the unit will create gzipped SQL dumps named with the date of creation: `YYYYMMDD`.
-
-To enable it, place the files in `/etc/systemd/system` then enable the timer: `systemctl enable --now immich-database-backup.timer`.
+To set up regular database backups, refer to the documentation in [`backup/README.md`](./backup/README.md).
+Note that immich already have a database backup mechanism integrated, that have been added since I wrote this.
 

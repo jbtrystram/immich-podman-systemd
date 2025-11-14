@@ -1,8 +1,0 @@
-
-You can add the volume as a drop in so when you update you don't have to edit the file each time:
-
-```
-mkdir -p /etc/containers/systemd/immich/immich-database.container.d/
-cp 10-backup-volume.conf /etc/containers/systemd/immich/immich-database.container.d/
-
-```
