@@ -6,6 +6,7 @@ After=immich-redis.service immich-database.service
 Pod=immich.pod
 ContainerName=immich_server
 EnvironmentFile=immich.env
+Secret=immich-db-password,type=env,target=DB_PASSWORD
 
 Image=immich-server.image
 
