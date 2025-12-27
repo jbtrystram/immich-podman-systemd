@@ -21,13 +21,21 @@ Note how the `immich-server.container` has an install target on `default.target`
 
 # How do I deploy it ?
 
+Populate values in `immich.env` as needed.
+
 Create a podman secret for the database password:
 
+- Rootful podman, create the secret for the root user.
 ```
-openssl rand -base64 20 | podman secret create immich-db-password -
+user@machine:~$ openssl rand -base64 20 | podman secret create immich-db-password -
 ```
 
-Populate values in `immich.env` as needed.
+- Rootless podman, create the secret for the user `immich`.
+```
+user@machine:~$ sudo su immich
+immich@machine:/home/user$ cd
+immich@machine:~$ openssl rand -base64 20 | podman secret create immich-db-password -
+```
 
 ## Volume setup
 
