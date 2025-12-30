@@ -31,7 +31,7 @@ spec:
     ## Starting from v1.106.1 the separate microservices
     ## container is no longer necessary
     - name: server
-      image: ghcr.io/immich-app/immich-server:v1.114.0
+      image: ghcr.io/immich-app/immich-server:v2.4.1
       envFrom:
       - configMapRef:
           name: immich-config
@@ -50,7 +50,7 @@ spec:
         readOnly: true
 
     - name: machine-learning
-      image: ghcr.io/immich-app/immich-machine-learning:v1.114.0
+      image: ghcr.io/immich-app/immich-machine-learning:v2.4.1
       envFrom:
       - configMapRef:
           name: immich-config
@@ -68,7 +68,7 @@ spec:
         name: immich-model-cache-host
     
     - name: psql
-      image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0
+      image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
       resource: {}
       securityContext:
         capabilities:
@@ -100,7 +100,7 @@ spec:
       args: ["-c" ,"shared_preload_libraries=vectors.so", "-c", 'search_path="$$user", public, vectors', "-c", "logging_collector=on", "-c", "max_wal_size=2GB", "-c", "shared_buffers=512MB", "-c", "wal_compression=on"]
 
     - name: redis
-      image: docker.io/library/redis:6.2-alpine
+      image: docker.io/valkey/valkey:9@sha256:fb8d272e529ea567b9bf1302245796f21a2672b8368ca3fcb938ac334e613c8f
       args:
       - redis-server
       - --save
