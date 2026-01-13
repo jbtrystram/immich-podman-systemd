@@ -14,7 +14,7 @@ This is adapted from immich provided docker-compose file, this will create a pod
 The repo is organized into the following directories:
 
 - **`quadlet/`**: Contains the core Quadlet unit files for deploying Immich services (database, server, machine learning, Redis) as Podman containers within a systemd pod.
-- **`ml-workers/`**: Contains Quadlet unit files for hardware-accelerated machine learning worker configurations, including OpenVINO and remote NVIDIA/AMD setups.
+- **`hw-machine-learning/`**: Contains Quadlet unit files for hardware-accelerated machine learning configurations: OpenVINO and NVIDIA/AMD setups.
 - **`backup/`**: Provides systemd service and timer units for regularly backing up the Immich PostgreSQL database.
 - **`kube/`**: Contains Kubernetes-style configuration files, including a ConfigMap and a Pod definition, for deploying Immich in a Kubernetes environment (or with podman kube play).
 >>>>>>> 27928af (tree: rework repo layout to improve clarity)

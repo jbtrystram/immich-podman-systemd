@@ -1,4 +1,5 @@
 [Container]
+Pod=immich.pod
 ContainerName=immich_ml
 PublishPort=3003:3003
 Image=ghcr.io/immich-app/immich-machine-learning:v2.4.1-cuda
@@ -20,6 +21,8 @@ AddDevice=nvidia.com/gpu=all
 [Service]
 Restart=always
 
-[Install]
-WantedBy=default.target
+# Uncomment this if you want to run the worker on a separate machine.
+# Otherwise, add a `WantedBy` dependency to the immich server pod.
+# [Install]
+# WantedBy=default.target
 
