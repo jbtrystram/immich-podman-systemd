@@ -1,3 +1,6 @@
 .env
 immich.env
 .PAT
+
+quadlet/immich-database.container.d/*.conf
+quadlet/immich-server.container.d/*.conf
