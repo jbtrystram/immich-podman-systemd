@@ -15,3 +15,8 @@ Notify=healthy
 
 [Service]
 Restart=always
+
+# Uncomment this if you want to run the worker on a separate machine.
+# Otherwise, add a `WantedBy` dependency to the immich server pod.
+# [Install]
+# WantedBy=default.target
