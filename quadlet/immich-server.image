@@ -1,6 +1,0 @@
-[Unit]
-Wants=nss-lookup.target network-online.target
-After=nss-lookup.target network-online.target
-
-[Image]
-Image=ghcr.io/immich-app/immich-server:v2.4.1

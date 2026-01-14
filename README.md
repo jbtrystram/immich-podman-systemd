@@ -72,7 +72,7 @@ EOF
 Copy these files into the user's `containers/systemd` directory:
 ```
 sudo -u immich mkdir -p ~immich/.config/containers/systemd/immich
-sudo -u immich cp -v -r *.image *.container *.pod immich.env *healthcheck volumes-dropins/* ~immich/.config/containers/systemd/immich/
+sudo -u immich cp -v -r *.container *.pod immich.env *healthcheck volumes-dropins/* ~immich/.config/containers/systemd/immich/
 ```
 Alternatively, quadlets can be placed under `/etc/containers/systemd/users/$(UID)`. See [documentation](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#podman-rootless-unit-search-path).
 
