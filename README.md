@@ -5,22 +5,22 @@
 
 This is a set of unit files to deploy immich through the podman-quadlet systemd generator
 
-See the [documentation](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html)
-This is adapted from immich provided docker-compose file, this will create a podman pod hosting all the containers.
+See the [podman documentation](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html) for details about podman quadlets.
+
+This is adapted from the immich docker-compose file, this will create a podman pod hosting all the containers.
 
 # Overview
 
-=======
 The repo is organized into the following directories:
 
-- **`quadlet/`**: Contains the core Quadlet unit files for deploying Immich services (database, server, machine learning, Redis) as Podman containers within a systemd pod.
+- **`quadlet/`**: Contains the core Quadlet unit files for deploying Immich services (database, server, machine learning, Redis) as Podman containers within a pod.
 - **`hw-machine-learning/`**: Contains Quadlet unit files for hardware-accelerated machine learning configurations: OpenVINO and NVIDIA/AMD setups.
-- **`backup/`**: Provides systemd service and timer units for regularly backing up the Immich PostgreSQL database.
 - **`kube/`**: Contains Kubernetes-style configuration files, including a ConfigMap and a Pod definition, for deploying Immich in a Kubernetes environment (or with podman kube play).
->>>>>>> 27928af (tree: rework repo layout to improve clarity)
+- **`backup/`**: Provides systemd service and timer units for regularly backing up the Immich PostgreSQL database. This is optionnal as [immich now provide a built-in service](https://docs.immich.app/administration/backup-and-restore/)
 
 # How to Deploy
 
+## Database secret
 Create a podman secret for the database password:
 
 ```
@@ -33,9 +33,8 @@ Populate values in `immich.env` as needed.
 
 Since the update to 1.128.0 i changed how the volumes are declared. I was tired of having to copy-paste 
 the quadlet files but having to update my volume paths each time.
-So I created the [volume-dropins](./volume-dropins) folder where the volumes mounts can be defined
-once and they will be merged with the final quadlet.
 
+See the [quadlet README](/quadlet/README.md#drop-ins) for details.
 
 ## rootful podman
 
@@ -75,6 +74,7 @@ Copy these files into the user's `containers/systemd` directory:
 sudo -u immich mkdir -p ~immich/.config/containers/systemd/immich
 sudo -u immich cp -v -r *.image *.container *.pod immich.env *healthcheck volumes-dropins/* ~immich/.config/containers/systemd/immich/
 ```
+Alternatively, quadlets can be placed under `/etc/containers/systemd/users/$(UID)`. See [documentation](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html#podman-rootless-unit-search-path).
 
 Start the user session, make it persistent and start the pod:
 ```
