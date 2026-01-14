@@ -1,0 +1,124 @@
+name: Bump images tags
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Immich version (e.g., v1.129.0). Defaults to latest release.'
+        required: false
+        type: string
+  schedule:
+    # Run every Monday at 9:00 AM UTC
+    - cron: '0 9 * * 1'
+
+jobs:
+  update-images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get latest Immich release and update quadlets
+        id: get-version
+        run: |
+          set -euxo pipefail
+          if [ -n "${{ inputs.version }}" ]; then
+            TARGET_IMMICH_VERSION="${{ inputs.version }}"
+          else
+            TARGET_IMMICH_VERSION=$(curl -s https://api.github.com/repos/immich-app/immich/releases/latest | jq -r .tag_name)
+          fi
+          echo "TARGET_IMMICH_VERSION=${TARGET_IMMICH_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "TARGET_IMMICH_VERSION=${TARGET_IMMICH_VERSION}" >> "$GITHUB_ENV"
+          echo "Using Immich version: ${TARGET_IMMICH_VERSION}"
+
+          curl -L -o "/tmp/docker-compose.yaml" "https://github.com/immich-app/immich/releases/download/${TARGET_IMMICH_VERSION}/docker-compose.yml"
+
+          # Extract database and redis images (these have full tags with digests)
+          DB_IMAGE=$(yq e '.services.database.image' /tmp/docker-compose.yaml)
+          REDIS_IMAGE=$(yq e '.services.redis.image' /tmp/docker-compose.yaml)
+
+          # Get the base image paths for server and ML (these use ${IMMICH_VERSION} variable)
+          SERVER_IMAGE_BASE=$(yq e '.services."immich-server".image' /tmp/docker-compose.yaml | sed 's/:\$.*//')
+          ML_IMAGE_BASE=$(yq e '.services."immich-machine-learning".image' /tmp/docker-compose.yaml | sed 's/:\$.*//')
+
+          # Construct server and ML images with the actual version tag
+          SERVER_IMAGE="${SERVER_IMAGE_BASE}:${TARGET_IMMICH_VERSION}"
+          ML_IMAGE="${ML_IMAGE_BASE}:${TARGET_IMMICH_VERSION}"
+
+          echo "Database image: ${DB_IMAGE}"
+          echo "Redis image: ${REDIS_IMAGE}"
+          echo "Server image: ${SERVER_IMAGE}"
+          echo "Machine Learning image: ${ML_IMAGE}"
+
+          # Update database image (only the Image= line in immich-database.container)
+          sed -i "s|^Image=.*$|Image=${DB_IMAGE}|" quadlet/immich-database.container
+
+          # Update redis image (only the Image= line in immich-redis.container)
+          sed -i "s|^Image=.*$|Image=${REDIS_IMAGE}|" quadlet/immich-redis.container
+
+          # Update server image (only the Image= line in immich-server.container)
+          sed -i "s|^Image=.*$|Image=${SERVER_IMAGE}|" quadlet/immich-server.container
+
+          # Update machine learning image (only the Image= line in all ML container files)
+          sed -i "s|^Image=.*$|Image=${ML_IMAGE}|" quadlet/immich-machine-learning.container
+          sed -i "s|^Image=.*$|Image=${ML_IMAGE}-rocm|" hw-machine-learning/immich-ml-amd.container
+          sed -i "s|^Image=.*$|Image=${ML_IMAGE}-cuda|" hw-machine-learning/immich-ml-nvidia.container
+          sed -i "s|^Image=.*$|Image=${ML_IMAGE}-openvino|" hw-machine-learning/immich-ml-openvivo.container
+
+          # Update version string in README.md
+          sed -i "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/${TARGET_IMMICH_VERSION}/g" README.md
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.check-changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: |
+            Update Immich to ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
+
+            Release: https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION}}
+          title: "Update Immich to ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}"
+          body: |
+            This PR updates Immich quadlet files to version **${{ steps.get-version.outputs.TARGET_IMMICH_VERSION}}**.
+
+            ## Upstream Release
+            https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION}}
+
+            ## Changes
+            - Updated database and Redis image tags from docker-compose.yml
+            - Updated version references in all container files and README
+
+            ## Reference docker-compose.yml
+            <details>
+            <summary>Click to view upstream docker-compose.yml</summary>
+
+            ```yaml
+            $(cat /tmp/docker-compose.yaml)
+            ```
+            </details>
+          branch: update-immich-${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
+          delete-branch: true
+          labels: |
+            automated
+
+      - name: PR Summary
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          echo "✅ Pull request created for Immich ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}"
+
+      - name: No Changes
+        if: steps.check-changes.outputs.has_changes == 'false'
+        run: |
+          echo "ℹ️ No changes detected. Quadlet files are already up to date with ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}"
