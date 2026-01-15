@@ -74,13 +74,6 @@ jobs:
           # Update version string in README.md
           sed -i "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/${TARGET_IMMICH_VERSION}/g" README.md
 
-      # - name: Archive the compose file
-      #   id: archive-compose
-      #   uses: actions/upload-artifact@v6
-      #   with:
-      #     name: compose
-      #     path: docker-compose.yaml
-
       - name: Check for changes
         id: check-changes
         run: |
@@ -90,16 +83,9 @@ jobs:
             echo "has_changes=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Create Pull Request
-        if: steps.check-changes.outputs.has_changes == 'true'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          commit-message: |
-            Update Immich to ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
-
-            Release: https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
-          title: "Update Immich to ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}"
-          body: |
+      - name: Write PR body
+        run: |
+          cat << EOF > gh-pr-body
             This PR updates Immich quadlet files to version **${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}**.
 
             ## Upstream Release
@@ -110,13 +96,27 @@ jobs:
             <summary>Click to view upstream docker-compose.yml</summary>
 
             ```yaml
-            ${{ steps.get-version.outputs.compose_file }}
+            $(cat $COMPOSE_FILE)
             ```
             </details>
           branch: update-immich-${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
           delete-branch: true
           labels: |
             automated
+          EOF
+
+          rm $COMPOSE_FILE          
+
+      - name: Create Pull Request
+        if: steps.check-changes.outputs.has_changes == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: |
+            Update Immich to ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
+
+            Release: https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
+          title: "Update Immich to ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}"
+          body-path: gh-pr-body
 
       - name: PR Summary
         if: steps.check-changes.outputs.has_changes == 'true'

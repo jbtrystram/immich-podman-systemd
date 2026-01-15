@@ -7,3 +7,4 @@ quadlet/immich-server.container.d/*.conf
 
 #the GH action download the upstream docker-compose file
 docker-compose.yaml
+gh-pr-body
