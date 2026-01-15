@@ -4,7 +4,7 @@ ContainerName=immich_postgres
 Environment="POSTGRES_INITDB_ARGS=--data-checksums"
 EnvironmentFile=immich.env
 Secret=immich-db-password,type=env,target=POSTGRES_PASSWORD
-Image=ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+Image=docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:739cdd626151ff1f796dc95a6591b55a714f341c737e27f045019ceabf8e8c52
 Volume=./immich-database-healthcheck:/health.sh:z
 ShmSize=128m
 # If you want to use the unit provided in `database_backup`
