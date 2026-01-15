@@ -4,3 +4,6 @@ immich.env
 
 quadlet/immich-database.container.d/*.conf
 quadlet/immich-server.container.d/*.conf
+
+#the GH action download the upstream docker-compose file
+docker-compose.yaml

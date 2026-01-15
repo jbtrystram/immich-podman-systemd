@@ -18,6 +18,8 @@ jobs:
       contents: write
       pull-requests: write
 
+    env:
+      COMPOSE_FILE: docker-compose.yaml
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,15 +37,15 @@ jobs:
           echo "TARGET_IMMICH_VERSION=${TARGET_IMMICH_VERSION}" >> "$GITHUB_ENV"
           echo "Using Immich version: ${TARGET_IMMICH_VERSION}"
 
-          curl -L -o "/tmp/docker-compose.yaml" "https://github.com/immich-app/immich/releases/download/${TARGET_IMMICH_VERSION}/docker-compose.yml"
+          curl -L -o ${COMPOSE_FILE} "https://github.com/immich-app/immich/releases/download/${TARGET_IMMICH_VERSION}/docker-compose.yml"
 
           # Extract database and redis images (these have full tags with digests)
-          DB_IMAGE=$(yq e '.services.database.image' /tmp/docker-compose.yaml)
-          REDIS_IMAGE=$(yq e '.services.redis.image' /tmp/docker-compose.yaml)
+          DB_IMAGE=$(yq e '.services.database.image' ${COMPOSE_FILE})
+          REDIS_IMAGE=$(yq e '.services.redis.image' ${COMPOSE_FILE})
 
           # Get the base image paths for server and ML (these use ${IMMICH_VERSION} variable)
-          SERVER_IMAGE_BASE=$(yq e '.services."immich-server".image' /tmp/docker-compose.yaml | sed 's/:\$.*//')
-          ML_IMAGE_BASE=$(yq e '.services."immich-machine-learning".image' /tmp/docker-compose.yaml | sed 's/:\$.*//')
+          SERVER_IMAGE_BASE=$(yq e '.services."immich-server".image' ${COMPOSE_FILE} | sed 's/:\$.*//')
+          ML_IMAGE_BASE=$(yq e '.services."immich-machine-learning".image' ${COMPOSE_FILE} | sed 's/:\$.*//')
 
           # Construct server and ML images with the actual version tag
           SERVER_IMAGE="${SERVER_IMAGE_BASE}:${TARGET_IMMICH_VERSION}"
@@ -72,6 +74,15 @@ jobs:
           # Update version string in README.md
           sed -i "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/${TARGET_IMMICH_VERSION}/g" README.md
 
+          echo "compose_file=$(cat $COMPOSE_FILE)" >> $GITHUB_OUTPUT
+
+      - name: Archive the compose file
+        id: archive-compose
+        uses: actions/upload-artifact@v6
+        with:
+          name: compose
+          path: docker-compose.yaml
+
       - name: Check for changes
         id: check-changes
         run: |
@@ -88,24 +99,20 @@ jobs:
           commit-message: |
             Update Immich to ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
 
-            Release: https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION}}
+            Release: https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
           title: "Update Immich to ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}"
           body: |
-            This PR updates Immich quadlet files to version **${{ steps.get-version.outputs.TARGET_IMMICH_VERSION}}**.
+            This PR updates Immich quadlet files to version **${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}**.
 
             ## Upstream Release
-            https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION}}
-
-            ## Changes
-            - Updated database and Redis image tags from docker-compose.yml
-            - Updated version references in all container files and README
+            https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
 
             ## Reference docker-compose.yml
             <details>
             <summary>Click to view upstream docker-compose.yml</summary>
 
             ```yaml
-            $(cat /tmp/docker-compose.yaml)
+            ${{ steps.get-version.outputs.compose_file }}
             ```
             </details>
           branch: update-immich-${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
