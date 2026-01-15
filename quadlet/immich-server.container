@@ -1,6 +1,6 @@
 [Unit]
-Requires=immich-redis.service immich-database.service 
-After=immich-redis.service immich-database.service 
+Requires=immich-redis.service immich-database.service immich-machine-learning.service
+After=immich-redis.service immich-database.service immich-machine-learning.service
 
 [Container]
 Pod=immich.pod
