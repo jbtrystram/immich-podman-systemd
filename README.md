@@ -20,14 +20,14 @@ The repo is organized into the following directories:
 
 # How to Deploy
 
+You may need to update the values in `quadlet/immich.env`.
+
 ## Database secret
 Create a podman secret for the database password:
 
 ```
 openssl rand -base64 20 | podman secret create immich-db-password -
 ```
-
-Populate values in `immich.env` as needed.
 
 ## Volume setup
 
@@ -38,11 +38,12 @@ See the [quadlet README](/quadlet/README.md#drop-ins) for details.
 
 ## rootful podman
 
-Copy these files into `/etc/containers/systemd` then reload systemd. 
+You can simply copy or symlink the content of the `quadlet` folder:
+`cp quadlet/* /etc/containers/systemd/`, then reload systemd. 
 
 It can be a subdirectory. e.g : 
 ```
-sudo cp -r . /etc/containers/systemd/immich
+sudo cp -r quadlet /etc/containers/systemd/immich
 sudo systemctl daemon-reload
 ```
 

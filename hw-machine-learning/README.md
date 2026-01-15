@@ -7,19 +7,6 @@ This work great but make sure to auto-start the container, or pull it from the m
 
 ## Example deployement with two machines
 
-On the same machine that run immich server I have the following:
-
-```
-$ cat /etc/containers/systemd/immich/immich-server.container.d/03-ml.conf
-
-[Unit]
-Requires=immich-machine-learning.service
-After=immich-machine-learning.service
-
-```
-
-This make sure there is always a machine learning service running, even if it's relying on CPU compute.
-
 On my gaming PC that run bazzite I have the `immich-ml-amd.container` under `~/.config/containers/systemd/immich-ml.container`.
 With this additional snippet at the end : 
 ```
