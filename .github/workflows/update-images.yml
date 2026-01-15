@@ -85,24 +85,22 @@ jobs:
 
       - name: Write PR body
         run: |
-          cat << EOF > gh-pr-body
-            This PR updates Immich quadlet files to version **${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}**.
+          echo $COMPOSE_FILE
+          
+          cat <<EOF > gh-pr-body
+          This PR updates Immich quadlet files to version **${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}**.
 
-            ## Upstream Release
-            https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
+          ## Upstream Release
+          https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
 
-            ## Reference docker-compose.yml
-            <details>
-            <summary>Click to view upstream docker-compose.yml</summary>
+          ## Reference docker-compose.yml
+          <details>
+          <summary>Click to view upstream docker-compose.yml</summary>
 
-            ```yaml
-            $(cat $COMPOSE_FILE)
-            ```
-            </details>
-          branch: update-immich-${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
-          delete-branch: true
-          labels: |
-            automated
+          \`\`\`yaml
+          $(cat $COMPOSE_FILE)
+          \`\`\`
+          </details>
           EOF
 
           rm $COMPOSE_FILE          
@@ -117,6 +115,10 @@ jobs:
             Release: https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
           title: "Update Immich to ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}"
           body-path: gh-pr-body
+          branch: update-immich-${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
+          delete-branch: true
+          labels: |
+            automated
 
       - name: PR Summary
         if: steps.check-changes.outputs.has_changes == 'true'
