@@ -74,14 +74,12 @@ jobs:
           # Update version string in README.md
           sed -i "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/${TARGET_IMMICH_VERSION}/g" README.md
 
-          echo "compose_file=$(cat $COMPOSE_FILE)" >> $GITHUB_OUTPUT
-
-      - name: Archive the compose file
-        id: archive-compose
-        uses: actions/upload-artifact@v6
-        with:
-          name: compose
-          path: docker-compose.yaml
+      # - name: Archive the compose file
+      #   id: archive-compose
+      #   uses: actions/upload-artifact@v6
+      #   with:
+      #     name: compose
+      #     path: docker-compose.yaml
 
       - name: Check for changes
         id: check-changes
