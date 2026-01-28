@@ -20,7 +20,6 @@ The repo is organized into the following directories:
 
 # How to Deploy
 
-You will need to update the directories in `quadlet/`
 You may need to update the values in `quadlet/immich.env`.
 
 ## Database secret
