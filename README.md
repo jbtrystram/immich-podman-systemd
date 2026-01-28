@@ -29,6 +29,18 @@ Create a podman secret for the database password:
 openssl rand -base64 20 | podman secret create immich-db-password -
 ```
 
+You'll have to execute this as the user podman will run under. Below you'll make a choice for rootful (username is `root`):
+
+```
+sudo -H bash -c 'openssl rand -base64 20 | podman secret create immich-db-password -'
+```
+
+... or rootless (username is `immich`):
+
+```
+sudo -H -u immich bash -c 'openssl rand -base64 20 | podman secret create immich-db-password -'
+```
+
 ## Volume setup
 
 Since the update to 1.128.0 i changed how the volumes are declared. I was tired of having to copy-paste 
