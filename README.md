@@ -20,6 +20,7 @@ The repo is organized into the following directories:
 
 # How to Deploy
 
+You will need to update the directories in `quadlet/`
 You may need to update the values in `quadlet/immich.env`.
 
 ## Database secret
@@ -27,6 +28,18 @@ Create a podman secret for the database password:
 
 ```
 openssl rand -base64 20 | podman secret create immich-db-password -
+```
+
+You'll have to execute this as the user podman will run under. Below you'll make a choice for rootful (username is `root`):
+
+```
+sudo -H bash -c 'openssl rand -base64 20 | podman secret create immich-db-password -'
+```
+
+... or rootless (username is `immich`):
+
+```
+sudo -H -u immich bash -c 'openssl rand -base64 20 | podman secret create immich-db-password -'
 ```
 
 ## Volume setup
