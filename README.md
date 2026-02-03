@@ -28,6 +28,8 @@ Create a podman secret for the database password:
 ```
 openssl rand -base64 20 | podman secret create immich-db-password -
 ```
+> NOTE: For rootless setups, make sure to create the secret as the target user, i.e. `sudo -u immich bash -c 'openssl rand....'`
+
 
 ## Volume setup
 
