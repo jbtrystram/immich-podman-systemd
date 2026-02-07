@@ -2,7 +2,7 @@
 Pod=immich.pod
 ContainerName=immich_ml
 PublishPort=3003:3003
-Image=ghcr.io/immich-app/immich-machine-learning:v2.5.3-cuda
+Image=ghcr.io/immich-app/immich-machine-learning:v2.5.5-cuda
 Volume=model-cache:/cache
 HealthCmd=["/bin/bash", "-c", "exec 5<>/dev/tcp/127.0.0.1/3003"]
 HealthStartPeriod=30s
