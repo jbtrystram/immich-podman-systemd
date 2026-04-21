@@ -111,7 +111,7 @@ jobs:
             Release: https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
           title: "Update Immich to ${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}"
           body-path: gh-pr-body
-          branch: update-immich-${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
+          branch: automated/update-immich
           delete-branch: true
           labels: |
             automated
