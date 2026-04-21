@@ -19,7 +19,7 @@ jobs:
       pull-requests: write
 
     env:
-      COMPOSE_FILE: docker-compose.yaml
+      COMPOSE_FILE: .github/docker-compose.yaml
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -79,7 +79,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: compose
-          path: docker-compose.yaml
+          path: .github/docker-compose.yaml
 
       - name: Check for changes
         id: check-changes
@@ -92,25 +92,14 @@ jobs:
 
       - name: Write PR body
         run: |
-          echo $COMPOSE_FILE
-          
           cat <<EOF > gh-pr-body
           This PR updates Immich quadlet files to version **${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}**.
 
           ## Upstream Release
           https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
 
-          ## Reference docker-compose.yml
-          <details>
-          <summary>Click to view upstream docker-compose.yml</summary>
-
-          \`\`\`yaml
-          $(cat $COMPOSE_FILE)
-          \`\`\`
-          </details>
+          The upstream \`docker-compose.yaml\` reference file is included in this PR — review its diff to see what changed upstream.
           EOF
-
-          rm $COMPOSE_FILE          
 
       - name: Create Pull Request
         if: steps.check-changes.outputs.has_changes == 'true'
