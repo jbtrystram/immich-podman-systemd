@@ -92,13 +92,22 @@ jobs:
 
       - name: Write PR body
         run: |
+          COMPOSE_DIFF=$(git diff -- ${COMPOSE_FILE})
+
           cat <<EOF > gh-pr-body
           This PR updates Immich quadlet files to version **${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}**.
 
           ## Upstream Release
           https://github.com/immich-app/immich/releases/tag/${{ steps.get-version.outputs.TARGET_IMMICH_VERSION }}
 
-          The upstream \`docker-compose.yaml\` reference file is included in this PR — review its diff to see what changed upstream.
+          ## Upstream docker-compose.yaml changes
+          <details>
+          <summary>Click to view diff</summary>
+
+          \`\`\`diff
+          ${COMPOSE_DIFF}
+          \`\`\`
+          </details>
           EOF
 
       - name: Create Pull Request
