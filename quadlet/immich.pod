@@ -1,3 +1,6 @@
 [Pod]
 PodName=immich
 PublishPort=2283:2283
+# For the database, but this needs to be set at the pod level
+# See https://github.com/jbtrystram/immich-podman-systemd/issues/75
+ShmSize=128m
