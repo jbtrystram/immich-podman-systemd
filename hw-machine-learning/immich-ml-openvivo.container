@@ -2,6 +2,7 @@
 Pod=immich.pod
 ContainerName=immich_machine_learning
 Image=ghcr.io/immich-app/immich-machine-learning:v3.4.1-openvino
+Environment=MACHINE_LEARNING_MODEL_REVISION=v2
 Volume=model-cache:/cache
 AddDevice=/dev/dri/:/dev/dri/
 Volume=/dev/bus/usb:/dev/bus/usb
